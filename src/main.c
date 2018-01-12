@@ -66,14 +66,14 @@ void main()
 	//初始化调试RTT
 	SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
 	//串口打印
-	//uart_hal_init(USART1);
+	uart_hal_init(USART1);
 #ifdef DEBUG
 	trace_printf("System clock: %u Hz\n", SystemCoreClock);
 #endif
 
 
 	//485模块接口
-	uart_hal_init(USART1);
+	//uart_hal_init(USART1);
 	//m6311r接口
 	uart_hal_init(USART3);
 	//power reset m6311r
@@ -82,7 +82,7 @@ void main()
 	//初始化网络接口
 	gprs_connect();
 	onenet_init();
-
+	modbus_init();
 	//load_cmd_para_from_flash();
 	//485 50ms poll
 	timerhw_create(50, 1, task_poll_485);
@@ -92,6 +92,7 @@ void main()
 	timer1hw_start();
 	//iwdg 初始化
 	iwdg_init();
+
 	while (1)
 	{
 		iot_onenet_task(timeCallback);

@@ -151,10 +151,11 @@ Revision: $Rev: 7859 $
                                                   );                                                \
                                 }
 
-  #elif (defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__))
+  #elif  (defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__))
     #ifndef   SEGGER_RTT_MAX_INTERRUPT_PRIORITY
       #define SEGGER_RTT_MAX_INTERRUPT_PRIORITY   (0x20)
     #endif
+
     #define SEGGER_RTT_LOCK()   {                                                                   \
                                     unsigned int LockState;                                         \
                                   __asm volatile ("mrs   %0, basepri  \n\t"                         \
@@ -196,9 +197,10 @@ Revision: $Rev: 7859 $
                                                 );                             \
                             }
 #else
-    #define SEGGER_RTT_LOCK()
-    #define SEGGER_RTT_UNLOCK()
-  #endif
+    #define SEGGER_RTT_LOCK()  //__asm volatile ("cpsie i" : : : "memory");
+
+    #define SEGGER_RTT_UNLOCK()	//__asm volatile ("cpsid i" : : : "memory");
+#endif
 #endif
 
 /*********************************************************************
@@ -325,7 +327,7 @@ Revision: $Rev: 7859 $
 #endif
 
 #ifndef   SEGGER_RTT_UNLOCK
-  #define SEGGER_RTT_UNLOCK()              // Unlock RTT (nestable) (i.e. enable previous interrupt lock state)
+  #define SEGGER_RTT_UNLOCK()             // Unlock RTT (nestable) (i.e. enable previous interrupt lock state)
 #endif
 
 #endif

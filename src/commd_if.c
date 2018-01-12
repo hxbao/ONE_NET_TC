@@ -52,7 +52,8 @@ void get_at_cmd_para(char* pAT, CMD_t* c);
 void rm_at_cmd_para(char* pAT, CMD_t* c);
 
 //从命令缓冲中解析得到应用命令和参数
-uint8_t get_commd(uint8_t* commd, uint8_t argv[])
+//uint8_t get_commd(uint8_t* commd, uint8_t argv[])
+uint8_t get_commd()
 {
 	if (diableCommdPoll)
 	{
@@ -65,9 +66,6 @@ uint8_t get_commd(uint8_t* commd, uint8_t argv[])
 
 	if (commd_cur_len > 0)
 	{
-#ifdef DEBUG
-		trace_printf("GET command->%s\n", commd_buf);
-#endif
 
 		if (strstr((char*) commd_buf, "AT+CMDDOWNCYC") != NULL)
 		{
@@ -133,47 +131,43 @@ uint8_t get_commd(uint8_t* commd, uint8_t argv[])
 
 }
 
-void commd_poll()
-{
-	uint8_t cmd;
-	uint8_t argv[16];
-	if (get_commd(&cmd, argv))
-	{
-#ifdef DEBUG
-		trace_printf("cmd:%d,argv1:%d,arg2:%d\n", cmd, *(int*) &argv,
-				*(int*) &argv[4]);
-#endif
-
-		switch (cmd)
-		{
-		case CMD_START_SAMPLE:
-
-			break;
-		case CMD_STOP_SAMPLE:
-
-			break;
-		case CMD_CONFIG_HZ:
-
-			break;
-		case CMD_CONFIG_ROLA_ADDR:
-
-			break;
-		case CMD_CONFIG_DEV_INFO:
-
-			break;
-		case CMD_GET_DEV_INFO:
-
-			break;
-		case CMD_STOP_ROLA_SEND:
-
-			break;
-		case CMD_GET_BLOCK_DATA:
-
-			break;
-		}
-
-	}
-}
+//void commd_poll()
+//{
+//	uint8_t cmd;
+//	uint8_t argv[16];
+//	if (get_commd(&cmd, argv))
+//	{
+//
+//		switch (cmd)
+//		{
+//		case CMD_START_SAMPLE:
+//
+//			break;
+//		case CMD_STOP_SAMPLE:
+//
+//			break;
+//		case CMD_CONFIG_HZ:
+//
+//			break;
+//		case CMD_CONFIG_ROLA_ADDR:
+//
+//			break;
+//		case CMD_CONFIG_DEV_INFO:
+//
+//			break;
+//		case CMD_GET_DEV_INFO:
+//
+//			break;
+//		case CMD_STOP_ROLA_SEND:
+//
+//			break;
+//		case CMD_GET_BLOCK_DATA:
+//
+//			break;
+//		}
+//
+//	}
+//}
 
 void poll_store_commd()
 {

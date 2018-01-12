@@ -407,7 +407,8 @@ void iot_onenet_task(uint32_t count)
 			memcpy(commd_buf, pRecvBuffer, readLen);
 			commd_cur_len = readLen;
 			commd_buf[commd_cur_len] = 0;
-			commd_poll();
+			get_commd();
+			//commd_poll();
 		}
 		my_free(pRecvBuffer);
 	}
@@ -623,7 +624,7 @@ uint8_t iot_onenet_send_raw(uint8_t *databuf, uint8_t rawNum, uint16_t dataLen)
 //		goto return_here;
 //	}
 	//尽可能快退出,不然有吃掉上面下发的数据指令
-	iot_send_at_cmd((char*) pDatabuf, "OK", 500);
+	iot_send_at_cmd((char*) pDatabuf, "OK", 2000);
 
 	my_free(pDatabuf);
 	return 0;

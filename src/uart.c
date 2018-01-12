@@ -11,6 +11,7 @@
 #include "string.h"
 #include "diag/trace.h"
 #include "timer.h"
+#include "SEGGER_RTT.h"
 
 #define UART_TX_BUF_SIZE 1024
 uint8_t UART_TX_BUF[UART_TX_BUF_SIZE];
@@ -68,29 +69,29 @@ void uart_hal_init(USART_TypeDef* uart_ins)
 		usart_init.USART_Parity = USART_Parity_No;
 		USART_Init(uart_ins, &usart_init);
 		//dmar rx
-		DMA_DeInit(DMA1_Channel5);
-		dma.DMA_PeripheralBaseAddr = (uint32_t) &(uart_ins->DR);
-		dma.DMA_MemoryBaseAddr = (uint32_t) UART1_BUF;
-		dma.DMA_DIR = DMA_DIR_PeripheralSRC;
-		dma.DMA_BufferSize = UART_BUF_SIZE;
-		dma.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-		dma.DMA_MemoryInc = DMA_MemoryInc_Enable;
-		dma.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-		dma.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-		dma.DMA_Mode = DMA_Mode_Circular;
-		dma.DMA_Priority = DMA_Priority_Medium;
-		dma.DMA_M2M = DMA_M2M_Disable;
-		DMA_Init(DMA1_Channel5, &dma);
-		DMA_Cmd(DMA1_Channel5, ENABLE);
+//		DMA_DeInit(DMA1_Channel5);
+//		dma.DMA_PeripheralBaseAddr = (uint32_t) &(uart_ins->DR);
+//		dma.DMA_MemoryBaseAddr = (uint32_t) UART1_BUF;
+//		dma.DMA_DIR = DMA_DIR_PeripheralSRC;
+//		dma.DMA_BufferSize = UART_BUF_SIZE;
+//		dma.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+//		dma.DMA_MemoryInc = DMA_MemoryInc_Enable;
+//		dma.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+//		dma.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+//		dma.DMA_Mode = DMA_Mode_Circular;
+//		dma.DMA_Priority = DMA_Priority_Medium;
+//		dma.DMA_M2M = DMA_M2M_Disable;
+//		DMA_Init(DMA1_Channel5, &dma);
+//		DMA_Cmd(DMA1_Channel5, ENABLE);
+//
+//		USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);
 
-		USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);
-
-//		nvic.NVIC_IRQChannel = USART1_IRQn;
-//		nvic.NVIC_IRQChannelPreemptionPriority = INTER_UART1;
-//		nvic.NVIC_IRQChannelSubPriority = 0;
-//		nvic.NVIC_IRQChannelCmd = ENABLE;
-//		USART_ITConfig(uart_ins, USART_IT_RXNE, ENABLE);
-//		NVIC_Init(&nvic);
+		nvic.NVIC_IRQChannel = USART1_IRQn;
+		nvic.NVIC_IRQChannelPreemptionPriority = INTER_UART1;
+		nvic.NVIC_IRQChannelSubPriority = 0;
+		nvic.NVIC_IRQChannelCmd = ENABLE;
+		USART_ITConfig(uart_ins, USART_IT_RXNE, ENABLE);
+		NVIC_Init(&nvic);
 	}
 	else if (uart_ins == USART2)
 	{
@@ -273,51 +274,69 @@ void DMA1_Channel7_IRQHandler()
 //uint8_t uart1_temp_buf[64];
 //uint8_t uart1_temp_buf_count = 0;
 ////接收中断处理
-//void USART1_IRQHandler()
-//{
-//	if (USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
-//	{
-//		USART_ReceiveData(USART1); // Clear IDLE interrupt flag bit
-//#ifdef DEBUG
-//		//trace_printf("receive uart3 data:%s\n", UART3_BUF);
-//#endif
-//		//Uart3RxCount = 0;
-//	}
-//	else if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
-//	{
-//		//数据已经超过最大的buffer了
-//		if (Uart1RxCount == UART_BUF_SIZE)
-//		{
-//			Uart1RxCount = 0;
-//		}
-//
-//		uart1_temp_buf[uart1_temp_buf_count++] = USART_ReceiveData(USART1);
-//		//扫描暂存
-//		for(uint8_t i = 0;i<uart1_temp_buf_count;i++)
-//		{
-//			if(uart1_temp_buf[i] == 0x5a && uart1_temp_buf[i+1] == 0x5a)
-//			{
-//				if(uart1_temp_buf[i+2] == 0x0a)
-//				{
-//					UART1_BUF[Uart1RxCount++] = USART_ReceiveData(USART1);
-//					//如果已经收到定义的一帧数据长度
-//					if(Uart1RxCount >= UART1_BUF[0])
-//					{
-//						//校验数据和
-//						//拷贝数据到modbus缓冲
-//						//清零缓冲计数
-//						Uart1RxCount = 0;
-//					}
-//				}else
-//				{
-//					uart1_temp_buf_count = 0;//暂存数据区清零
-//				}
-//			}
-//		}
-//		//UART1_BUF[Uart1RxCount++] = USART_ReceiveData(USART1);
-//		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
-//	}
-//}
+void USART1_IRQHandler()
+{
+uint8_t i;
+	if (USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
+	{
+		USART_ReceiveData(USART1); // Clear IDLE interrupt flag bit
+#ifdef DEBUG
+		//trace_printf("receive uart3 data:%s\n", UART3_BUF);
+#endif
+		//Uart3RxCount = 0;
+	}
+	else if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+	{
+		//数据已经超过最大的buffer了
+		if (Uart1RxCount == UART_BUF_SIZE)
+		{
+			Uart1RxCount = 0;
+		}
+
+		UART1_BUF[Uart1RxCount] = USART_ReceiveData(USART1);
+		if(UART1_BUF[0] != 0x5a)
+		{
+			Uart1RxCount =0;
+			return ;
+		}else
+		{
+			Uart1RxCount++;
+		}
+		//多余3个字节判断
+		if(Uart1RxCount>=3)
+		{
+#ifdef DEBUG
+				//SEGGER_RTT_printf(0,"0x%x 0x%x 0x%x\n",UART1_BUF[0],UART1_BUF[1],UART1_BUF[2]);
+#endif
+			if((UART1_BUF[0] == 0x5a) && (UART1_BUF[1] == 0xa5) && (UART1_BUF[2] == 0x0a))
+			{//接受本次数据
+
+#ifdef DEBUG
+				if(UART1_BUF[3] > 4)
+				{
+					//SEGGER_RTT_printf(0,"len %d\n",UART1_BUF[3]);
+				}
+#endif
+				if(Uart1RxCount == UART1_BUF[3]+2)
+				{
+					for(i=0;i<Uart1RxCount;i++)
+					{
+						modbus_temp_buf[i] = UART1_BUF[i];
+					}
+					modbus_temp_len = Uart1RxCount;
+					Uart1RxCount = 0;
+				}
+
+			}else
+			{
+				Uart1RxCount = 0;
+			}
+		}
+
+
+		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+	}
+}
 
 void USART2_IRQHandler()
 {
@@ -409,94 +428,95 @@ void uart_read(USART_TypeDef* uart_ins, uint8_t *pdata, uint8_t len)
 //		return 0;
 
 //}
-//轮询485接口特定命令帧
-uint16_t iot_uart485_recv(uint8_t *pBuf)
-{
-	uint16_t frameLen;
-	uint8_t* point5a = 0;
-	uint16_t i;
-
-	//DMA5 通道已经传送了多少字节的数据
-	frameLen = UART_BUF_SIZE - (DMA1_Channel5->CNDTR);
-	if (frameLen)
-	{
-		//搜寻一帧数据
-		for (i = 0; i < UART_BUF_SIZE - 4; i++)
-		{
-			if (UART1_BUF[i] == 0x5a && UART1_BUF[i + 1] == 0xa5)
-			{
-				if (UART1_BUF[i + 2] == 0x0a)
-				{
-					//检查数据长度
-					uint16_t len;
-					len = UART1_BUF[i + 3];
-
-					//整个数据帧没有循环
-					if (frameLen > len)
-					{
-						uint8_t sum = 0;
-						uint8_t j;
-						for (j = 0; j < len + 1; j++)
-						{
-							sum += UART1_BUF[i + j];
-						}
-						if (sum == UART1_BUF[i + j])
-						{ //校验通过
-							point5a = &UART1_BUF[i];
-							memcpy(pBuf, point5a, len + 2);
-							memset(UART1_BUF, 0, UART_BUF_SIZE);
-							return len + 2;
-						}
-					}
-					else //有循环
-					{
-						uint8_t sum = 0;
-						uint8_t j;
-						uint8_t count = 0;
-						uint8_t pos = 0;
-						for (j = 0; j < len + 1; j++)
-						{
-							if(i+j>UART_BUF_SIZE)
-							{
-								count = (i+j - UART_BUF_SIZE);
-
-							}else
-								if(i+j==UART_BUF_SIZE)
-								{
-									count = i+j;
-									pos = j;
-								}
-							else
-							{
-								count = i+j;
-							}
-
-							sum += UART1_BUF[count];
-						}
-						if (sum == UART1_BUF[count])
-						{ //校验通过
-							point5a = &UART1_BUF[i];
-							//两次拷贝
-							memcpy(pBuf, point5a, pos);
-							memcpy(pBuf+pos, 0, len + 2 - pos);
-
-							memset(UART1_BUF, 0, UART_BUF_SIZE);
-							return len + 2;
-						}
-					}
-
-				}
-				else // 0x0b 数据帧或其它的数据
-				{
-
-				}
-			}
-		}
-
-		return 0;
-	}
-	else
-	{
-		return 0;
-	}
-}
+////轮询485接口特定命令帧
+//uint16_t iot_uart485_recv(uint8_t *pBuf)
+//{
+//	uint16_t frameLen;
+//	uint8_t* point5a = 0;
+//	uint16_t i;
+//
+//	//DMA5 通道已经传送了多少字节的数据
+//	//frameLen = UART_BUF_SIZE - (DMA1_Channel5->CNDTR);
+//	frameLen = Uart1RxCount;
+//	if (frameLen)
+//	{
+//		//搜寻一帧数据
+//		for (i = 0; i < UART_BUF_SIZE - 4; i++)
+//		{
+//			if (UART1_BUF[i] == 0x5a && UART1_BUF[i + 1] == 0xa5)
+//			{
+//				if (UART1_BUF[i + 2] == 0x0a)
+//				{
+//					//检查数据长度
+//					uint16_t len;
+//					len = UART1_BUF[i + 3];
+//
+//					//整个数据帧没有循环
+//					if (frameLen > len)
+//					{
+//						uint8_t sum = 0;
+//						uint8_t j;
+//						for (j = 0; j < len + 1; j++)
+//						{
+//							sum += UART1_BUF[i + j];
+//						}
+//						if (sum == UART1_BUF[i + j])
+//						{ //校验通过
+//							point5a = &UART1_BUF[i];
+//							memcpy(pBuf, point5a, len + 2);
+//							memset(UART1_BUF, 0, UART_BUF_SIZE);
+//							return len + 2;
+//						}
+//					}
+//					else //有循环
+//					{
+//						uint8_t sum = 0;
+//						uint8_t j;
+//						uint8_t count = 0;
+//						uint8_t pos = 0;
+//						for (j = 0; j < len + 1; j++)
+//						{
+//							if(i+j>UART_BUF_SIZE)
+//							{
+//								count = (i+j - UART_BUF_SIZE);
+//
+//							}else
+//								if(i+j==UART_BUF_SIZE)
+//								{
+//									count = i+j;
+//									pos = j;
+//								}
+//							else
+//							{
+//								count = i+j;
+//							}
+//
+//							sum += UART1_BUF[count];
+//						}
+//						if (sum == UART1_BUF[count])
+//						{ //校验通过
+//							point5a = &UART1_BUF[i];
+//							//两次拷贝
+//							memcpy(pBuf, point5a, pos);
+//							memcpy(pBuf+pos, 0, len + 2 - pos);
+//
+//							memset(UART1_BUF, 0, UART_BUF_SIZE);
+//							return len + 2;
+//						}
+//					}
+//
+//				}
+//				else // 0x0b 数据帧或其它的数据
+//				{
+//
+//				}
+//			}
+//		}
+//
+//		return 0;
+//	}
+//	else
+//	{
+//		return 0;
+//	}
+//}

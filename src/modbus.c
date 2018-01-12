@@ -9,14 +9,17 @@
 #include "stdint.h"
 #include "string.h"
 #include "m6311r.h"
+#include "modbus.h"
+#include "SEGGER_RTT.h"
 
-#define TEMP_BUF_SIZE 256
+
 #define UART_485 USART1
 
 #define iot_uart485_send(pbuf,len) uart_send_data(UART_485, pbuf, len)
 
 // //485数据暂存缓冲区，循环缓冲区
 uint8_t modbus_temp_buf[TEMP_BUF_SIZE];
+uint8_t modbus_temp_len = 0;
 
 //从485看过来的两个缓冲区，读缓冲区和写缓冲区
 uint8_t modbus_readBuf[256] =
@@ -175,14 +178,41 @@ void dispatch_modbus(uint8_t *modbus_data)
 	}
 }
 
+void modbus_init()
+{
+	modbus_temp_buf[0] = 0x5a;
+	modbus_temp_buf[1] = 0xa5;
+	modbus_temp_buf[2] = 0x0a;
+
+}
+
 
 void modbus_task()
 {
-	uint16_t readLen = 0;
+
 	//readLen = iot_uart485_buffer_len();
-	readLen = iot_uart485_recv(modbus_temp_buf);
-	if (readLen)
+	//readLen = iot_uart485_recv(modbus_temp_buf);
+	uint16_t i;
+	uint8_t sum = 0;
+
+	if (modbus_temp_len)
 	{
-		dispatch_modbus(modbus_temp_buf);
+
+		//校验
+		for(i=0;i<modbus_temp_len-1;i++)
+		{
+			sum += modbus_temp_buf[i];
+		}
+
+		if(sum ==modbus_temp_buf[i])
+		{
+			dispatch_modbus(modbus_temp_buf);
+		}else
+		{
+#ifdef DEBUG
+		SEGGER_RTT_printf(0,"verify sum faid\n");
+#endif
+		}
+		modbus_temp_len = 0;
 	}
 }

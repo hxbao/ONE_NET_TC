@@ -28,7 +28,8 @@ uint8_t diableCommdPoll;
 //#define COMMD_STOP_ROLA_SEND "AT+CMDSET_STOP_ROLA_SEND"
 
 void poll_store_commd();
-void commd_poll();
+uint8_t get_commd();
+//void commd_poll();
 
 void load_cmd_para_from_flash();
 void store_cmd_para_to_flash_task();
