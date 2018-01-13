@@ -41,7 +41,7 @@
 #endif
 
 #define TRACE_USE_UART 0
-#define TRACE_USE_RTT 1
+#define TRACE_USE_RTT 0
 
 // ----------------------------------------------------------------------------
 

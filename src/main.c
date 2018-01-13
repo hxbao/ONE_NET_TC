@@ -63,8 +63,10 @@ void main()
 	sys_nvic_init();
 
 	timer_start();
+#ifdef DEBUG
 	//初始化调试RTT
 	SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
+#endif
 	//串口打印
 	uart_hal_init(USART1);
 #ifdef DEBUG
