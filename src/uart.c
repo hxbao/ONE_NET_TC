@@ -294,6 +294,7 @@ uint8_t i;
 		}
 
 		UART1_BUF[Uart1RxCount] = USART_ReceiveData(USART1);
+
 		if(UART1_BUF[0] != 0x5a)
 		{
 			Uart1RxCount =0;
@@ -325,6 +326,7 @@ uint8_t i;
 					}
 					modbus_temp_len = Uart1RxCount;
 					Uart1RxCount = 0;
+					UART1_BUF[0] =0;
 				}
 
 			}else
