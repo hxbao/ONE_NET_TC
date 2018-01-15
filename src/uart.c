@@ -276,17 +276,10 @@ void DMA1_Channel7_IRQHandler()
 ////接收中断处理
 void USART1_IRQHandler()
 {
-uint8_t i;
-	if (USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
+	uint8_t i;
+	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
-		USART_ReceiveData(USART1); // Clear IDLE interrupt flag bit
-#ifdef DEBUG
-		//trace_printf("receive uart3 data:%s\n", UART3_BUF);
-#endif
-		//Uart3RxCount = 0;
-	}
-	else if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
-	{
+		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 		//数据已经超过最大的buffer了
 		if (Uart1RxCount == UART_BUF_SIZE)
 		{
@@ -332,11 +325,12 @@ uint8_t i;
 			}else
 			{
 				Uart1RxCount = 0;
+				UART1_BUF[0] =0;
 			}
 		}
 
 
-		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+
 	}
 }
 
