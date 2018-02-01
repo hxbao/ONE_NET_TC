@@ -233,7 +233,9 @@ uint8_t iot_onenet_send_ping()
 			{
 				reConnectCount = 0;
 				one_connect_state = 0;
-				//reset_gprs_module();
+				//重新启动模块
+				iot_send_at_cmd("AT+CFUN=1,1\r\n", "OK", 3000);
+
 				gprs_connect();
 				onenet_init();
 			}
@@ -425,6 +427,12 @@ void iot_onenet_task(uint32_t count)
 		if (count % 120 == 1)
 		{
 			iot_onenet_send_ping();
+		}
+
+		// 每10分钟报告一次信号质量
+		if(count % 600 == 1)
+		{
+			iot_send_csq();
 		}
 	}
 }

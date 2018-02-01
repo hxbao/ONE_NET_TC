@@ -70,11 +70,13 @@ uint8_t get_commd()
 		if (strstr((char*) commd_buf, "AT+CMDDOWNCYC") != NULL)
 		{
 			get_at_cmd_para((char *) commd_buf, cmds);
+			store_cmd_para_to_flash_task();
 			//store to flash
 		}
 		else if (strstr((char*) commd_buf, "AT+CMDRM") != NULL)
 		{
 			rm_at_cmd_para((char *) commd_buf, cmds);
+			store_cmd_para_to_flash_task();
 			//store to flash
 		}
 		else if (strstr((char*) commd_buf, "AT+CMDGET_SIMID") != NULL)
