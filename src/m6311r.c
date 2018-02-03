@@ -424,7 +424,7 @@ void iot_onenet_task(uint32_t count)
 	}
 	else
 	{
-		if (count % 120 == 1)
+		if (count % 60 == 1)
 		{
 			iot_onenet_send_ping();
 		}
