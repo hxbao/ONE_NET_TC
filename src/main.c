@@ -5,7 +5,6 @@
  *      Author: hxbao
  */
 
-
 // ----------------------------------------------------------------------------
 #include <mymisc.h>
 #include <timer.h>
@@ -28,7 +27,6 @@
 //#pragma GCC diagnostic ignored "-Wmissing-declarations"
 //#pragma GCC diagnostic ignored "-Wreturn-type"
 uint32_t timeCallback = 0;
-
 
 //50ms 轮询调度,中断中执行,其中不行调用有中断的函数
 void task_poll_485()
@@ -65,14 +63,13 @@ void main()
 	timer_start();
 #ifdef DEBUG
 	//初始化调试RTT
-	SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
+	//SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
 #endif
 	//串口打印
 	uart_hal_init(USART1);
 #ifdef DEBUG
 	trace_printf("System clock: %u Hz\n", SystemCoreClock);
 #endif
-
 
 	//485模块接口
 	//uart_hal_init(USART1);
@@ -90,7 +87,7 @@ void main()
 	timerhw_create(50, 1, task_poll_485);
 	timerhw_start();
 //	//1s 任务调度执行
-	timer1hw_create(1000,1,task_poll_1s);
+	timer1hw_create(1000, 1, task_poll_1s);
 	timer1hw_start();
 	//iwdg 初始化
 	iwdg_init();
@@ -100,6 +97,27 @@ void main()
 		iot_onenet_task(timeCallback);
 		//kick iwdg
 		iwdg_kick();
+
+		//故障状态重启
+		if (reM6311Start == 1)
+		{
+			reM6311Start = 0;
+			//关机
+			m6311r_reset();
+			iwdg_kick();
+			//等待15s
+			sys_stop_delay(5000);
+			iwdg_kick();
+			sys_stop_delay(5000);
+			//重新开机
+			m6311r_reset();
+			iwdg_kick();
+			sys_stop_delay(5000);
+			iwdg_kick();
+			gprs_connect();
+			onenet_init();
+
+		}
 	}
 
 	//test_uart5();//已测试

@@ -33,6 +33,8 @@ char M6311_SIM_id[25] =
 //onenet 连接状态
 uint8_t one_connect_state = 0;
 
+uint8_t reM6311Start = 0;
+
 //内部使用函数
 uint8_t get_info_from_m6311(char* cmd, char *ret, uint8_t retLen,
 		int32_t timeoutms);
@@ -142,7 +144,7 @@ void m6311r_reset()
 	gpio.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOA, &gpio);
 	GPIO_ResetBits(GPIOA, GPIO_Pin_6);
-	sys_stop_delay(3000);
+	sys_stop_delay(4000);
 	GPIO_SetBits(GPIOA, GPIO_Pin_6);
 }
 
@@ -233,11 +235,10 @@ uint8_t iot_onenet_send_ping()
 			{
 				reConnectCount = 0;
 				one_connect_state = 0;
+				reM6311Start =1;
 				//重新启动模块
-				iot_send_at_cmd("AT+CFUN=1,1\r\n", "OK", 3000);
+				//iot_send_at_cmd("AT+CFUN=1,1\r\n", "OK", 3000);
 
-				gprs_connect();
-				onenet_init();
 			}
 		}
 
@@ -303,12 +304,12 @@ void iot_send_simcard_id()
 	iot_onenet_send_raw((uint8_t*) pCmdBuf, 1, strlen(pCmdBuf));
 }
 
-void iot_send_csq()
+void iot_send_csq(uint32_t count)
 {
 	char pCmdBuf[50];
 	uint8_t csq = 0;
 	csq = get_csq();
-	snprintf(pCmdBuf, 50, "csq,,%d", csq);
+	snprintf(pCmdBuf, 50, "csq,,%d;count,,%d", csq,(int)count);
 	iot_onenet_send_raw((uint8_t*) pCmdBuf, 1, strlen(pCmdBuf));
 }
 
@@ -432,7 +433,7 @@ void iot_onenet_task(uint32_t count)
 		// 每10分钟报告一次信号质量
 		if(count % 600 == 1)
 		{
-			iot_send_csq();
+			iot_send_csq(count);
 		}
 	}
 }

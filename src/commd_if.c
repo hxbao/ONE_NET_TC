@@ -105,7 +105,7 @@ uint8_t get_commd()
 		}
 		else if (strstr((char*) commd_buf, "AT+CMDGET_CSQ") != NULL)
 		{
-			iot_send_csq();
+			iot_send_csq(1000);
 
 		}
 		else if (strstr((char*) commd_buf, "AT+CMD485BAUD=") != NULL)

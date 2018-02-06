@@ -9,6 +9,7 @@
 #define INCLUDE_G_CONF_H_
 
 #include "eeprom.h"
+#define DEBUG 1
 
 enum
 {
