@@ -45,12 +45,19 @@ typedef struct
 
 #define EE_DEV_INFO_ADDR (EEPROM_PARA1_BASE)
 
-//#define ONENET_PRODUCT_ID "112286"
-//#define ONENET_MKEY "mTebuQmvziqUi0rWFjz8GsC77L4="
-//#define ONENET_DESP "cddz"
+#ifdef CDDZ
+
+#define ONENET_PRODUCT_ID "112286"
+#define ONENET_MKEY "mTebuQmvziqUi0rWFjz8GsC77L4="
+#define ONENET_DESP "cddz"
+
+#endif
+
+#ifdef ZQDZ
 #define ONENET_PRODUCT_ID "97821"
 #define ONENET_MKEY "UjEKcwTj0FCil3dmwekpUGX4eHY="
 #define ONENET_DESP "zqdz"
+#endif
 
 //Ì«ºþÄÜ¹Èkey
 //#define ONENET_PRODUCT_ID "82709"
