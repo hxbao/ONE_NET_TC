@@ -21,5 +21,6 @@ void iot_send_csq(uint32_t count);
 uint8_t iot_onenet_read(uint8_t *pRecvBuffer);
 void iot_onenet_task(uint32_t count);
 void m6311r_reset();
+void iot_send_iap_info(char *iapinfo);
 
 #endif /* INCLUDE_M6311R_H_ */

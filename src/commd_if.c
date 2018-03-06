@@ -17,6 +17,7 @@
 #include "timer.h"
 #include "m6311r.h"
 #include "eeprom.h"
+#include "iap.h"
 
 //接收的命令缓冲
 uint8_t commd_buf[COMMD_BUF_SIZE];
@@ -111,6 +112,43 @@ uint8_t get_commd()
 		else if (strstr((char*) commd_buf, "AT+CMD485BAUD=") != NULL)
 		{
 
+		}
+		else if (strstr((char*) commd_buf, "AT+IAP=") != NULL)
+		{
+			//iap 升级包
+			uint8_t *piap;
+			uint8_t iapRtnCode;
+			char pCmdBuf[100];
+
+
+			piap = my_malloc((dataLen - strlen("AT+IAP=")) / 2);
+
+			asc2hex3((char*) &commd_buf[7], (dataLen - strlen("AT+IAP=")) / 2,
+					piap);
+			memcpy((uint8_t*) &bd, piap, (dataLen - strlen("AT+IAP=")) / 2);
+
+			iapRtnCode = iap_temporaryStore_appbin();
+			if (iapRtnCode == BIN_BLOCK_DOWN_OK)
+			{
+				snprintf(pCmdBuf, 100, "ack ok,%d", bd.AppbinCurBlockIndex);
+				//发送iap升级包ack信息
+				iot_send_iap_info(pCmdBuf);
+
+			}
+			else if (iapRtnCode == BIN_FILE_DOWN_OK)
+			{
+
+				snprintf(pCmdBuf, 100, "file down ok");
+				iot_send_iap_info(pCmdBuf);
+				//now reset mcu
+				NVIC_SystemReset();
+			}
+			else
+			{
+				snprintf(pCmdBuf, 100, "ack not ok");
+				iot_send_iap_info(pCmdBuf);
+
+			}
 		}
 		else
 		{

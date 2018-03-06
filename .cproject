@@ -29,7 +29,7 @@
             			
             <storageModule moduleId="cdtBuildSystem" version="4.0.0">
                 				
-                <configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="${cross_rm} -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430" name="Release_2018-2-6" parent="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+                <configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="${cross_rm} -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430" name="Release_2018-2-6" parent="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release" postannouncebuildStep="" postbuildStep="arm-eabi-objcopy -O binary -S OneNet_TC.elf OneNet_TC.bin" preannouncebuildStep="" prebuildStep="">
                     					
                     <folderInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430." name="/" resourcePath="">
                         						
@@ -283,7 +283,7 @@
                                 								
                                 <option id="ilg.gnuarmeclipse.managedbuild.cross.option.printsize.format.1314813015" name="Size format" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.printsize.format" useByScannerDiscovery="false"/>
                                 								
-                                <option id="ilg.gnuarmeclipse.managedbuild.cross.option.printsize.hex.2096082123" name="Hex" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.printsize.hex" value="true" valueType="boolean"/>
+                                <option id="ilg.gnuarmeclipse.managedbuild.cross.option.printsize.hex.2096082123" name="Hex" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.printsize.hex" useByScannerDiscovery="false" value="true" valueType="boolean"/>
                                 							
                             </tool>
                             						
@@ -675,6 +675,14 @@
     	
     <storageModule moduleId="refreshScope" versionNumber="2">
         		
+        <configuration configurationName="Release_CDDZ"/>
+        		
+        <configuration configurationName="Release_2018-2-6">
+            			
+            <resource resourceType="PROJECT" workspacePath="/OneNet_TC"/>
+            		
+        </configuration>
+        		
         <configuration configurationName="Debug">
             			
             <resource resourceType="PROJECT" workspacePath="/DAQ_KX122_F103"/>
@@ -684,12 +692,6 @@
         <configuration configurationName="Release">
             			
             <resource resourceType="PROJECT" workspacePath="/DAQ_KX122_F103"/>
-            		
-        </configuration>
-        		
-        <configuration configurationName="Release_2018-2-6">
-            			
-            <resource resourceType="PROJECT" workspacePath="/OneNet_TC"/>
             		
         </configuration>
         	

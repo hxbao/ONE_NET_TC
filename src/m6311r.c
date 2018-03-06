@@ -18,7 +18,6 @@
 #include "diag/trace.h"
 #include "modbus.h"
 
-
 #pragma GCC diagnostic ignored "-Wunused-function"
 
 #define M6311_USE_USARTX USART3
@@ -99,10 +98,11 @@ uint8_t iot_wait_at_ack(char *pAck, uint32_t timeOutMs)
 		if ((uint32_t) (timeCount * 100 + 100) > timeOutMs)
 		{
 #ifdef DEBUG
-			if(recvBuf !=NULL)
+			if (recvBuf != NULL)
 			{
 				trace_printf("get ack:%s\n", recvBuf);
-			}else
+			}
+			else
 			{
 				trace_printf("get ack:NULL\n");
 			}
@@ -235,7 +235,7 @@ uint8_t iot_onenet_send_ping()
 			{
 				reConnectCount = 0;
 				one_connect_state = 0;
-				reM6311Start =1;
+				reM6311Start = 1;
 				//重新启动模块
 				//iot_send_at_cmd("AT+CFUN=1,1\r\n", "OK", 3000);
 
@@ -254,7 +254,6 @@ uint8_t iot_onenet_send_ping()
 uint8_t iot_onenet_send_bin_data(uint8_t *databuf, uint16_t dataLen)
 {
 	uint16_t len;
-
 
 	len = 2 * dataLen + strlen("AT+CIOTDAT=0,%d,\"%s\"\r\n") + 10;
 
@@ -309,7 +308,15 @@ void iot_send_csq(uint32_t count)
 	char pCmdBuf[50];
 	uint8_t csq = 0;
 	csq = get_csq();
-	snprintf(pCmdBuf, 50, "csq,,%d;count,,%d", csq,(int)count);
+	snprintf(pCmdBuf, 50, "csq,,%d;count,,%d", csq, (int) count);
+	iot_onenet_send_raw((uint8_t*) pCmdBuf, 1, strlen(pCmdBuf));
+}
+
+void iot_send_iap_info(char *iapinfo)
+{
+	char pCmdBuf[100];
+
+	snprintf(pCmdBuf, 100, "iapinfo,,%s", iapinfo);
 	iot_onenet_send_raw((uint8_t*) pCmdBuf, 1, strlen(pCmdBuf));
 }
 
@@ -431,7 +438,7 @@ void iot_onenet_task(uint32_t count)
 		}
 
 		// 每10分钟报告一次信号质量
-		if(count % 600 == 1)
+		if (count % 600 == 1)
 		{
 			iot_send_csq(count);
 		}

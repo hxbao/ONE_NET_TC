@@ -49,7 +49,9 @@
 #define STMFLASH_PARA13_BASE (0xc00)
 #define STMFLASH_PARA14_BASE (0xd00)
 #define STMFLASH_PARA15_BASE (0xe00)
-#define STMFLASH_PARA16_BASE (0xf00)
+//#define STMFLASH_PARA16_BASE (0xf00)
+
+#define STMFLASH_IAP_INFO_BASE (0xf00)
 
 
 void stmflash_read_bytes(uint32_t stmFlashAddr, uint16_t *pbuf,
