@@ -478,6 +478,10 @@
                                     <listOptionValue builtIn="false" value="HSE_VALUE=8000000"/>
                                     									
                                     <listOptionValue builtIn="false" value="USE_COMM_ROLA"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="DEBUG"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="TRACE"/>
                                     								
                                 </option>
                                 								
@@ -705,36 +709,6 @@
         	
     </storageModule>
     	
-    <storageModule moduleId="scannerConfiguration">
-        		
-        <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-        		
-        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1957154094;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1957154094.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.142251410;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.179549424">
-            			
-            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-            		
-        </scannerConfigBuildInfo>
-        		
-        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1957154094;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1957154094.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.831337662;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.166469043">
-            			
-            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-            		
-        </scannerConfigBuildInfo>
-        		
-        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.127264914;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.598009026">
-            			
-            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-            		
-        </scannerConfigBuildInfo>
-        		
-        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.55927171;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1142649423">
-            			
-            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-            		
-        </scannerConfigBuildInfo>
-        	
-    </storageModule>
-    	
     <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
         		
         <buildTargets>
@@ -756,6 +730,48 @@
             </target>
             		
         </buildTargets>
+        	
+    </storageModule>
+    	
+    <storageModule moduleId="scannerConfiguration">
+        		
+        <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+        		
+        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430.330543643;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430.330543643.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1447035537;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1486603546">
+            			
+            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+            		
+        </scannerConfigBuildInfo>
+        		
+        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.127264914;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.598009026">
+            			
+            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+            		
+        </scannerConfigBuildInfo>
+        		
+        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430.330543643;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430.330543643.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.1273513977;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1103844383">
+            			
+            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+            		
+        </scannerConfigBuildInfo>
+        		
+        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1957154094;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1957154094.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.142251410;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.179549424">
+            			
+            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+            		
+        </scannerConfigBuildInfo>
+        		
+        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.18041430.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.55927171;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1142649423">
+            			
+            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+            		
+        </scannerConfigBuildInfo>
+        		
+        <scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1957154094;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1957154094.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.831337662;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.166469043">
+            			
+            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+            		
+        </scannerConfigBuildInfo>
         	
     </storageModule>
     
