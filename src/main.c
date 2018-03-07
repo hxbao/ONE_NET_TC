@@ -46,6 +46,7 @@ void task_poll_1s()
 	//poll_store_commd();
 	//cmds和flash内容同步
 	//store_cmd_para_to_flash_task();
+	iwdg_kick();
 	timeCallback++;
 
 }
@@ -105,20 +106,10 @@ void main()
 #ifdef DEBUG
 			SEGGER_RTT_printf(0,"reset m6311\n");
 #endif
-			//关机
-			//m6311r_reset();
-			//iwdg_kick();
-			//等待15s
-			//sys_stop_delay(25000);//等待watchdog 复位
-			//iwdg_kick();
-			//sys_stop_delay(5000);
-			//重新开机
-			//m6311r_reset();
-			//iwdg_kick();
-			//sys_stop_delay(5000);
-			//iwdg_kick();
+			//15s之后重新连接
+			sys_stop_delay(15000);
 			gprs_reconnect();
-			iwdg_kick();
+
 			onenet_init();
 
 		}

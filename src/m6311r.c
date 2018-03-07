@@ -184,7 +184,7 @@ void gprs_connect()
 void gprs_reconnect()
 {
 	iot_send_at_cmd("AT+CGDCONT=1,\"IP\",\"CMNET\"\r\n", "OK", 10000);
-	//iwdg_kick();
+
 	iot_send_at_cmd("AT+CGACT=1,1\r\n", "OK", 10000);
 }
 
@@ -192,7 +192,7 @@ void onenet_init()
 {
 	char cmd[128];
 
-	if (iot_send_at_cmd("AT+CIOT?\r\n", "OK", 5000))
+	//if (iot_send_at_cmd("AT+CIOT?\r\n", "OK", 5000))
 	{
 		//…Ë÷√≤˙∆∑id
 		snprintf(cmd, sizeof(cmd), "AT+CIOTPROID=%s\r\n", ONENET_PRODUCT_ID);
