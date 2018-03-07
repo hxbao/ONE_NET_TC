@@ -19,6 +19,7 @@
 #include "modbus.h"
 #include "SEGGER_RTT.h"
 
+
 #pragma GCC diagnostic ignored "-Wunused-function"
 
 #define M6311_USE_USARTX USART3
@@ -254,6 +255,7 @@ uint8_t iot_onenet_send_ping()
 			//重新启动模块
 			iot_send_at_cmd("AT+CFUN=1,1\r\n", "OK", 5000);
 
+
 		}
 		//}
 
@@ -324,6 +326,15 @@ void iot_send_csq(uint32_t count)
 	uint8_t csq = 0;
 	csq = get_csq();
 	snprintf(pCmdBuf, 50, "csq,,%d;count,,%d", csq, (int) count);
+
+	iot_onenet_send_raw((uint8_t*) pCmdBuf, 1, strlen(pCmdBuf));
+}
+
+void iot_send_iap_info(char *iapinfo)
+{
+	char pCmdBuf[100];
+
+	snprintf(pCmdBuf, 100, "iapinfo,,%s", iapinfo);
 	iot_onenet_send_raw((uint8_t*) pCmdBuf, 1, strlen(pCmdBuf));
 }
 
