@@ -13,6 +13,7 @@ extern uint8_t one_connect_state ;
 extern uint8_t reM6311Start;
 
 void gprs_connect();
+void gprs_reconnect();
 void onenet_init();
 uint8_t iot_onenet_send_ping();
 uint8_t iot_onenet_send_bin_data(uint8_t *databuf, uint16_t dataLen);

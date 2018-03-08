@@ -46,6 +46,7 @@ void task_poll_1s()
 	//poll_store_commd();
 	//cmds和flash内容同步
 	//store_cmd_para_to_flash_task();
+	iwdg_kick();
 	timeCallback++;
 
 }
@@ -68,7 +69,7 @@ void main()
 	//串口打印
 	uart_hal_init(USART1);
 #ifdef DEBUG
-	trace_printf("System clock: %u Hz\n", SystemCoreClock);
+	SEGGER_RTT_printf(0,"System clock: %u Hz\n", SystemCoreClock);
 #endif
 
 	//485模块接口
@@ -102,19 +103,13 @@ void main()
 		if (reM6311Start == 1)
 		{
 			reM6311Start = 0;
-			//关机
-			m6311r_reset();
-			iwdg_kick();
-			//等待15s
-			sys_stop_delay(5000);
-			iwdg_kick();
-			sys_stop_delay(5000);
-			//重新开机
-			m6311r_reset();
-			iwdg_kick();
-			sys_stop_delay(5000);
-			iwdg_kick();
-			gprs_connect();
+#ifdef DEBUG
+			SEGGER_RTT_printf(0,"reset m6311\n");
+#endif
+			//15s之后重新连接
+			sys_stop_delay(15000);
+			gprs_reconnect();
+
 			onenet_init();
 
 		}

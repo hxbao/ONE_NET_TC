@@ -45,7 +45,7 @@ typedef struct
 
 #define EE_DEV_INFO_ADDR (EEPROM_PARA1_BASE)
 
-#ifdef CDDZ
+#if 1//CDDZ
 
 #define ONENET_PRODUCT_ID "112286"
 #define ONENET_MKEY "mTebuQmvziqUi0rWFjz8GsC77L4="
@@ -53,7 +53,7 @@ typedef struct
 
 #endif
 
-#ifdef ZQDZ
+#if 0 //ZQDZ
 #define ONENET_PRODUCT_ID "97821"
 #define ONENET_MKEY "UjEKcwTj0FCil3dmwekpUGX4eHY="
 #define ONENET_DESP "zqdz"

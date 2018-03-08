@@ -17,6 +17,8 @@
 #include "commd_if.h"
 #include "diag/trace.h"
 #include "modbus.h"
+#include "SEGGER_RTT.h"
+
 
 #pragma GCC diagnostic ignored "-Wunused-function"
 
@@ -64,7 +66,7 @@ uint8_t iot_wait_at_ack(char *pAck, uint32_t timeOutMs)
 	if (!pAck)
 	{
 #ifdef DEBUG
-		trace_printf("ack buffer is null");
+		SEGGER_RTT_printf(0, "ack buffer is null");
 #endif
 		return 1;
 	}
@@ -83,7 +85,7 @@ uint8_t iot_wait_at_ack(char *pAck, uint32_t timeOutMs)
 			if (strstr((char*) recvBuf, (char*) pAck) != NULL)
 			{
 #ifdef DEBUG
-				trace_printf("get ack:%s\n", recvBuf);
+				SEGGER_RTT_printf(0, "get ack:%s\n", recvBuf);
 #endif
 				uart_fflush(M6311_USE_USARTX);
 				my_free(recvBuf);
@@ -100,11 +102,11 @@ uint8_t iot_wait_at_ack(char *pAck, uint32_t timeOutMs)
 #ifdef DEBUG
 			if (recvBuf != NULL)
 			{
-				trace_printf("get ack:%s\n", recvBuf);
+				SEGGER_RTT_printf(0, "get ack:%s\n", recvBuf);
 			}
 			else
 			{
-				trace_printf("get ack:NULL\n");
+				SEGGER_RTT_printf(0, "get ack:NULL\n");
 			}
 
 #endif
@@ -120,13 +122,13 @@ int32_t iot_send_at_cmd(char *pCmd, char *pAck, int32_t timeOutMs)
 {
 	uart_fflush(M6311_USE_USARTX);
 #ifdef DEBUG
-	trace_printf("send at commad:%s\n", pCmd);
+	SEGGER_RTT_printf(0, "send at commad:%s\n", pCmd);
 #endif
 	iot_uart_send((uint8_t*) pCmd, strlen((char*) pCmd));
 	if (iot_wait_at_ack(pAck, timeOutMs))
 	{
 #ifdef DEBUG
-		trace_printf("get at commad timeout\n", pCmd);
+		SEGGER_RTT_printf(0, "get at commad timeout\n", pCmd);
 #endif
 		return 1;
 	}
@@ -150,6 +152,7 @@ void m6311r_reset()
 
 void gprs_connect()
 {
+	uint8_t count = 0;
 	//iot_send_at_cmd("AT+CREG=0\r\n", "OK", 1000);
 	while (1)
 	{
@@ -159,6 +162,10 @@ void gprs_connect()
 			break;
 		}
 		timer_sleep(1000);
+		if (count++ > 10)
+		{
+			break;
+		}
 	}
 //	//查询信号质量
 	iot_send_at_cmd("AT+CSQ\r\n", "OK", 10000);
@@ -175,11 +182,18 @@ void gprs_connect()
 
 }
 
+void gprs_reconnect()
+{
+	iot_send_at_cmd("AT+CGDCONT=1,\"IP\",\"CMNET\"\r\n", "OK", 10000);
+
+	iot_send_at_cmd("AT+CGACT=1,1\r\n", "OK", 10000);
+}
+
 void onenet_init()
 {
 	char cmd[128];
 
-	if (iot_send_at_cmd("AT+CIOT?\r\n", "OK", 5000))
+	//if (iot_send_at_cmd("AT+CIOT?\r\n", "OK", 5000))
 	{
 		//设置产品id
 		snprintf(cmd, sizeof(cmd), "AT+CIOTPROID=%s\r\n", ONENET_PRODUCT_ID);
@@ -225,22 +239,25 @@ uint8_t iot_onenet_send_ping()
 
 	if (iot_send_at_cmd("AT+CIOTPING\r\n", "+CIOTPING: OK", 5000))
 	{
-		if (check_onenet_connect_status() == 0)
+
+		//不一定能检测到已经离线了
+		//if (check_onenet_connect_status() == 0)
+		//{
+		//need reconnect to onenet
+		iot_send_at_cmd("AT+CIOTSTART=0\r\n", "CONNECT OK", 5000);
+		reConnectCount++;
+		SEGGER_RTT_printf(0, "ping failed count = %d\n", reConnectCount);
+		if (reConnectCount >= 3)
 		{
-			//need reconnect to onenet
-			iot_send_at_cmd("AT+CIOTSTART=0\r\n", "CONNECT OK", 5000);
+			reConnectCount = 0;
+			one_connect_state = 0;
+			reM6311Start = 1;
+			//重新启动模块
+			iot_send_at_cmd("AT+CFUN=1,1\r\n", "OK", 5000);
 
-			reConnectCount++;
-			if (reConnectCount >= 3)
-			{
-				reConnectCount = 0;
-				one_connect_state = 0;
-				reM6311Start = 1;
-				//重新启动模块
-				//iot_send_at_cmd("AT+CFUN=1,1\r\n", "OK", 3000);
 
-			}
 		}
+		//}
 
 	}
 	else
@@ -309,6 +326,7 @@ void iot_send_csq(uint32_t count)
 	uint8_t csq = 0;
 	csq = get_csq();
 	snprintf(pCmdBuf, 50, "csq,,%d;count,,%d", csq, (int) count);
+
 	iot_onenet_send_raw((uint8_t*) pCmdBuf, 1, strlen(pCmdBuf));
 }
 
@@ -412,7 +430,8 @@ void iot_onenet_task(uint32_t count)
 		if (readLen)
 		{
 #ifdef DEBUG
-			trace_printf("get onenet data:%d,%s\n", readLen, pRecvBuffer);
+			SEGGER_RTT_printf(0, "get onenet data:%d,%s\n", readLen,
+					pRecvBuffer);
 #endif
 			memcpy(commd_buf, pRecvBuffer, readLen);
 			commd_cur_len = readLen;
@@ -492,7 +511,7 @@ uint8_t get_simid(char *simid)
 	if (get_info_from_m6311("AT+CCID?\r\n", (char*) recvBuf, dataLen, 2000))
 	{
 #ifdef DEBUG
-		trace_printf("get ccid timeout\n");
+		SEGGER_RTT_printf(0, "get ccid timeout\n");
 #endif
 		return 1;
 	}
@@ -505,7 +524,7 @@ uint8_t get_simid(char *simid)
 		p1 += strlen("+CCID: 0,\"");
 		sscanf(p1, "%[0123456789ABCDEF]", simid);
 #ifdef DEBUG
-		trace_printf("get simid:%s\n", simid);
+		SEGGER_RTT_printf(0, "get simid:%s\n", simid);
 #endif
 		my_free(recvBuf);
 		return 0;
@@ -527,7 +546,7 @@ uint8_t get_imeiid(char *imeiid)
 	if (get_info_from_m6311("AT+CGSN\r\n", (char*) recvBuf, dataLen, 10000))
 	{
 #ifdef DEBUG
-		trace_printf("get imei timeout\n");
+		SEGGER_RTT_printf(0, "get imei timeout\n");
 #endif
 		return 1;
 	}
@@ -540,7 +559,7 @@ uint8_t get_imeiid(char *imeiid)
 		p1 += strlen("+CGSN: 1,");
 		sscanf(p1, "%[0123456789ABCDEF]", imeiid);
 #ifdef DEBUG
-		trace_printf("get imeiid:%s\n", imeiid);
+		SEGGER_RTT_printf(0, "get imeiid:%s\n", imeiid);
 #endif
 		my_free(recvBuf);
 		return 0;
@@ -563,12 +582,12 @@ uint8_t get_csq()
 	if (get_info_from_m6311("AT+CSQ\r\n", (char*) recvBuf, dataLen, 1000))
 	{
 #ifdef DEBUG
-		trace_printf("get csq timeout\n");
+		SEGGER_RTT_printf(0, "get csq timeout\n");
 #endif
 		return 1;
 	}
 #ifdef DEBUG
-	trace_printf("get csq ack:%s\n", recvBuf);
+	SEGGER_RTT_printf(0, "get csq ack:%s\n", recvBuf);
 #endif
 	p1 = strstr((char*) recvBuf, "+CSQ:");
 	if (p1 != NULL)
@@ -596,7 +615,7 @@ uint8_t check_onenet_connect_status()
 			2000))
 	{
 #ifdef DEBUG
-		trace_printf("get CIOTSTATUS timeout\n");
+		SEGGER_RTT_printf(0, "get CIOTSTATUS timeout\n");
 #endif
 		return 1;
 	}
@@ -606,7 +625,7 @@ uint8_t check_onenet_connect_status()
 	{
 		sscanf(p1, "+CIOTSTATUS: %d", &iotstatus);
 #ifdef DEBUG
-		trace_printf("get ack:%s", (char*) recvBuf);
+		SEGGER_RTT_printf(0, "get ack:%s", (char*) recvBuf);
 #endif
 		my_free(recvBuf);
 		return (uint8_t) iotstatus;
@@ -629,7 +648,7 @@ uint8_t iot_onenet_send_raw(uint8_t *databuf, uint8_t rawNum, uint16_t dataLen)
 	else
 	{
 #ifdef DEBUG
-		trace_printf("my_malloc failed in iot_onenet_send_raw\n");
+		SEGGER_RTT_printf(0, "my_malloc failed in iot_onenet_send_raw\n");
 #endif
 		return 1;
 	}
