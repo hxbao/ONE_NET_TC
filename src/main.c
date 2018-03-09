@@ -69,7 +69,8 @@ void main()
 	//串口打印
 	uart_hal_init(USART1);
 #ifdef DEBUG
-	SEGGER_RTT_printf(0,"System clock: %u Hz\n", SystemCoreClock);
+	//SEGGER_RTT_printf(0,"System clock: %u Hz\n", SystemCoreClock);
+	SEGGER_RTT_printf(0,"load app code start...\n");
 #endif
 
 	//485模块接口

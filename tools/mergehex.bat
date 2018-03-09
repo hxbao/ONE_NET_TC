@@ -1,1 +1,1 @@
-mergehex.exe --merge .\boot.hex  ..\Release_2018-2-6\OneNet_TC.hex   --output  ..\output\OneNet_TC_BootLoader.hex
+mergehex.exe --merge .\bootloader.hex  ..\Release_2018-2-6\OneNet_TC.hex   --output  ..\output\OneNet_TC_BootLoader.hex

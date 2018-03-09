@@ -9,7 +9,7 @@
 #include "stdio.h"
 
 #define MEM_BLOCK_SIZE 512
-#define MAX_MEM_SIZE 8*1024
+#define MAX_MEM_SIZE 6*1024
 #define LARGER_MEM_SIZE 2*1024
 #define MEM_ALLOC_TABLE_SIZE    (MAX_MEM_SIZE/MEM_BLOCK_SIZE)
 
